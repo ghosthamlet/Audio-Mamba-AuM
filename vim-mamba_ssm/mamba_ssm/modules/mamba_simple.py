@@ -10,25 +10,16 @@ from torch import Tensor
 
 from einops import rearrange, repeat
 
-try:
-    from causal_conv1d import causal_conv1d_fn, causal_conv1d_update
-except ImportError:
-    causal_conv1d_fn, causal_conv1d_update = None
+from mamba_ssm.ops.selective_scan_interface import selective_scan_fn, mamba_inner_fn
+from mamba_ssm.ops.causal_conv import causal_conv1d_fn, causal_conv1d_update
+from mamba_ssm.ops.layernorm import RMSNorm, layer_norm_fn, rms_norm_fn
 
-try:
-    from mamba_ssm.ops.selective_scan_interface import selective_scan_fn, mamba_inner_fn, bimamba_inner_fn, mamba_inner_fn_no_out_proj
-except ImportError:
-    selective_scan_fn, mamba_inner_fn, bimamba_inner_fn, mamba_inner_fn_no_out_proj = None, None, None, None, None
 
 try:
     from mamba_ssm.ops.triton.selective_state_update import selective_state_update
 except ImportError:
     selective_state_update = None
 
-try:
-    from mamba_ssm.ops.triton.layernorm import RMSNorm, layer_norm_fn, rms_norm_fn
-except ImportError:
-    RMSNorm, layer_norm_fn, rms_norm_fn = None, None, None
 
 
 class Mamba(nn.Module):
@@ -448,7 +439,7 @@ class Block(nn.Module):
                 self.norm.bias,
                 residual=residual,
                 prenorm=True,
-                residual_in_fp32=self.residual_in_fp32,
+                #residual_in_fp32=self.residual_in_fp32,
                 eps=self.norm.eps,
             )
         hidden_states = self.mixer(hidden_states, inference_params=inference_params)
