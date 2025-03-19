@@ -44,7 +44,7 @@ def create_block(
         mixer_cls,
         norm_cls=norm_cls,
         fused_add_norm=fused_add_norm,
-        residual_in_fp32=residual_in_fp32,
+        #residual_in_fp32=residual_in_fp32,
     )
     block.layer_idx = layer_idx
     return block
@@ -168,7 +168,7 @@ class MixerModel(nn.Module):
                 eps=self.norm_f.eps,
                 residual=residual,
                 prenorm=False,
-                residual_in_fp32=self.residual_in_fp32,
+                #residual_in_fp32=self.residual_in_fp32,
             )
         return hidden_states
 
